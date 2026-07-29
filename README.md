@@ -5,10 +5,10 @@ phone calls. Customers browse the catalog with live per-size stock, order
 themselves, and pay by Razorpay or cash on delivery. Orders land in one admin
 dashboard with GST invoices.
 
-> **Status:** under construction — the shop takes real orders and payments,
-> and the owner can now manage products, orders and settings from `/admin`.
-> Policy pages and deployment are what's left. See the phase checklist at the
-> bottom.
+> **Status:** feature-complete. Every build phase below is done — the
+> storefront, checkout, payments, admin panel, policy pages and deployment
+> config are all in place. Deploying it live from here on is account setup
+> and filling in environment variables; see **Deploying** below.
 
 ---
 
@@ -76,6 +76,113 @@ docker run -d --name shoe-shop-db -p 27017:27017 mongo:7
 
 ---
 
+## Deploying
+
+Three free tiers, wired together. Do these roughly in order — Cloudinary,
+Razorpay and Brevo have no dependency on each other, but Render and Vercel each
+need to know the other's URL, so there's one round trip at the end where you
+come back and fill in a value you didn't have yet.
+
+### 1. Accounts
+
+- **MongoDB Atlas** — create a free **M0** cluster. Under Database Access, add
+  a user with a strong password. Under Network Access, allow `0.0.0.0/0` —
+  Render's free tier has no static outbound IP, so anything narrower will
+  intermittently refuse connections. Copy the connection string from
+  Database → Connect → Drivers; this is `MONGODB_URI`.
+- **Cloudinary** — create a free account. `CLOUDINARY_CLOUD_NAME`,
+  `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` are all on the dashboard's
+  landing page.
+- **Razorpay** — create an account. Test mode works immediately with the
+  `rzp_test_...` key pair from Settings → API Keys — enough to develop and
+  demo checkout. **Live keys require KYC approval**, and that review checks
+  that Terms, Privacy, Refund, Shipping and Contact pages are reachable on
+  your live domain — which is exactly what phase 10 added, so deploy those
+  first. Once you have a key pair (test or live), set
+  `RAZORPAY_KEY_ID`/`RAZORPAY_KEY_SECRET`. The webhook secret
+  (`RAZORPAY_WEBHOOK_SECRET`) comes later, in step 3, once the API has a real
+  URL to register.
+- **Brevo** — create a free account (300 emails/day). Under SMTP & API → SMTP,
+  copy the login as `SMTP_USER` and generate an SMTP key as `SMTP_PASS`.
+  `MAIL_FROM` must be a sender address verified in Brevo; `OWNER_EMAIL` is
+  just your own inbox, for new-order alerts.
+
+### 2. API → Render
+
+This repo includes `render.yaml`, so Render can set the service up from the
+blueprint rather than by hand:
+
+1. [dashboard.render.com/blueprints](https://dashboard.render.com/blueprints) → New Blueprint Instance → point it at this
+   repo. Render reads `render.yaml` and creates the `shoe-shop-api` web
+   service with the build/start commands and health check already filled in.
+2. Fill in every environment variable the blueprint marked `sync: false` —
+   `MONGODB_URI`, `JWT_SECRET` (generate with `openssl rand -base64 48`),
+   `ADMIN_EMAIL`/`ADMIN_PASSWORD`, the Cloudinary, Razorpay and Brevo values
+   from step 1, and `CLIENT_URL`. You won't have the real Vercel URL yet —
+   use `http://localhost:5173` for now and come back once step 3 gives you
+   the real one, or deploy Vercel first if you'd rather fill this in
+   correctly the first time.
+3. Deploy. Once it's live, note the service URL
+   (`https://shoe-shop-api-xxxx.onrender.com`) — that's `VITE_API_URL` for
+   the client.
+4. **Keep it warm.** Render's free tier sleeps after 15 minutes idle, and the
+   first request after that can take up to a minute while it wakes — a bad
+   first impression for someone arriving from an Instagram link. Point a free
+   [UptimeRobot](https://uptimerobot.com) HTTP(S) monitor at
+   `https://<your-api>/api/health` on a 5-minute interval; the health check
+   already reports database connectivity, so a monitor failure means
+   something is actually wrong, not just that Atlas hiccuped.
+
+### 3. Storefront → Vercel
+
+1. Import this repo as a new Vercel project. Leave **Root Directory** at the
+   repository root — the committed `vercel.json` overrides the build and
+   output directory for the npm-workspaces layout, so Vercel's own framework
+   auto-detection would otherwise get this wrong.
+2. Set the project's environment variables: `VITE_API_URL` (the Render URL
+   from step 2) and `VITE_RAZORPAY_KEY_ID` (the public key id — never the
+   secret — from step 1).
+3. Deploy. Note the resulting domain
+   (`https://shoe-shop-xxxx.vercel.app`, or your custom domain).
+4. Back in Render, update `CLIENT_URL` to this real domain and redeploy —
+   this is what CORS and the admin refresh cookie check against, so checkout
+   and admin sign-in will fail against a placeholder value.
+
+### 4. Razorpay webhook and going live
+
+Once the API has a stable URL: Razorpay Dashboard → Settings → Webhooks → add
+`https://<your-api>/api/webhooks/razorpay`, subscribe to `payment.captured`
+and `payment.failed`, and set a webhook secret — put that value in Render as
+`RAZORPAY_WEBHOOK_SECRET`. This is the reliable payment-confirmation path; see
+`services/order.service.ts` for why it exists alongside the checkout
+callback.
+
+When you're ready to accept real money, submit Razorpay's KYC review, swap
+`RAZORPAY_KEY_ID`/`_SECRET` for the live pair, and redeploy the API.
+
+### 5. First run in production
+
+```bash
+MONGODB_URI="<production connection string>" npm run seed:admin
+```
+
+creates the one admin account from `ADMIN_EMAIL`/`ADMIN_PASSWORD` — run it
+once against the production database from your own machine (never commit
+production credentials to a `.env` file that gets deployed). Sign in at
+`https://<your-domain>/admin/login` and add real products; the sample
+catalog from `npm run seed` is a local-dev convenience, not something to run
+against production.
+
+### Backups
+
+Atlas's free M0 tier has no built-in automated backup. `npm run backup`
+(`MONGODB_URI` pointed at production) dumps every collection to timestamped
+JSON under `apps/server/backups/` — run it from your own machine, not from
+Render, whose disk is wiped on every deploy and every wake from sleep. A
+calendar reminder to run it weekly is a reasonable bar for a shop this size.
+
+---
+
 ## Scripts
 
 | Command                | What it does                                          |
@@ -83,6 +190,8 @@ docker run -d --name shoe-shop-db -p 27017:27017 mongo:7
 | `npm run dev`          | Server and client together, both watching             |
 | `npm run build`        | Build shared, then server, then client                |
 | `npm run seed`         | Seed the admin account and sample products            |
+| `npm run seed:admin`   | Create/reset just the admin account                   |
+| `npm run backup`       | Dump every collection to timestamped JSON              |
 | `npm run lint`         | ESLint across all workspaces                          |
 | `npm run format`       | Prettier write                                        |
 | `npm run typecheck`    | `tsc --noEmit` in every workspace                     |
@@ -151,6 +260,4 @@ finding we have consciously accepted. Review advisories manually when upgrading.
 - [x] 7 — Pricing, GST, checkout
 - [x] 8 — Payments, orders, invoices, emails
 - [x] 9 — Admin panel
-- [ ] 10 — Policy pages, deployment, docs
-
-Deployment instructions and the full account-setup walkthrough land in phase 10.
+- [x] 10 — Policy pages, deployment, docs

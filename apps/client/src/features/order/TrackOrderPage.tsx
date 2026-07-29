@@ -13,7 +13,9 @@ export default function TrackOrderPage() {
     event.preventDefault();
     const trimmed = orderNumber.trim();
     if (!trimmed || !phone.trim()) return;
-    void navigate(`/order/${encodeURIComponent(trimmed)}?phone=${encodeURIComponent(phone.trim())}`);
+    void navigate(
+      `/order/${encodeURIComponent(trimmed)}?phone=${encodeURIComponent(phone.trim())}`,
+    );
   }
 
   return (

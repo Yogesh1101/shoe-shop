@@ -82,7 +82,10 @@ function customerPayload(overrides: Record<string, unknown> = {}) {
 }
 
 function paymentSignature(orderId: string, paymentId: string): string {
-  return crypto.createHmac('sha256', RAZORPAY_KEY_SECRET).update(`${orderId}|${paymentId}`).digest('hex');
+  return crypto
+    .createHmac('sha256', RAZORPAY_KEY_SECRET)
+    .update(`${orderId}|${paymentId}`)
+    .digest('hex');
 }
 
 describeWithMongo('order creation and payment', () => {
@@ -191,7 +194,10 @@ describeWithMongo('order creation and payment', () => {
   });
 
   it('blocks delivery to a PIN code the shop does not serve', async () => {
-    await Settings.findOneAndUpdate({ _id: SETTINGS_ID }, { $set: { blockedPincodes: ['560001'] } });
+    await Settings.findOneAndUpdate(
+      { _id: SETTINGS_ID },
+      { $set: { blockedPincodes: ['560001'] } },
+    );
     const productId = await seedProduct();
 
     const response = await request(app)
@@ -314,7 +320,10 @@ describeWithMongo('order creation and payment', () => {
       event: 'payment.captured',
       payload: { payment: { entity: { id: 'pay_webhook_1', order_id: razorpayOrderId } } },
     });
-    const signature = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(payload).digest('hex');
+    const signature = crypto
+      .createHmac('sha256', RAZORPAY_WEBHOOK_SECRET)
+      .update(payload)
+      .digest('hex');
 
     const response = await request(app)
       .post('/api/webhooks/razorpay')
@@ -438,7 +447,9 @@ describeWithMongo('admin order management', () => {
     const productId = await seedProductForAdmin();
     const { orderId } = await placeOrder(productId);
 
-    const list = await request(app).get('/api/admin/orders').set('Authorization', `Bearer ${token}`);
+    const list = await request(app)
+      .get('/api/admin/orders')
+      .set('Authorization', `Bearer ${token}`);
     expect(list.status).toBe(200);
     expect(list.body.total).toBe(1);
     expect(list.body.items[0].priorCancelledCount).toBe(0);

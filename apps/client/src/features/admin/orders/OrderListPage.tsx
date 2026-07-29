@@ -17,7 +17,13 @@ import { ErrorState } from '@/components/common/States';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge, Input, Label, Skeleton } from '@/components/ui/primitives';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useDebouncedValue } from '@/lib/useDebouncedValue';
 
 const PAGE_SIZE = 25;
@@ -33,7 +39,11 @@ const STATUS_BADGE_VARIANT: Record<OrderStatus, 'default' | 'outline' | 'muted'>
 };
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 }
 
 export default function OrderListPage() {
@@ -167,10 +177,7 @@ export default function OrderListPage() {
               query.data?.items.map((order) => (
                 <tr key={order._id} className="border-b last:border-0 hover:bg-accent/40">
                   <td className="px-4 py-3">
-                    <Link
-                      to={`/admin/orders/${order._id}`}
-                      className="font-medium hover:underline"
-                    >
+                    <Link to={`/admin/orders/${order._id}`} className="font-medium hover:underline">
                       {order.orderNumber}
                     </Link>
                   </td>
@@ -214,7 +221,12 @@ export default function OrderListPage() {
             Page {query.data.page} of {query.data.totalPages} · {query.data.total} orders
           </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
               Previous
             </Button>
             <Button

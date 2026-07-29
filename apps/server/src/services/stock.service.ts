@@ -17,7 +17,10 @@ async function takeOne(item: StockAdjustment): Promise<boolean> {
     { _id: item.productId },
     { $inc: { 'variants.$[v].sizes.$[s].stock': -item.qty } },
     {
-      arrayFilters: [{ 'v.color': item.color }, { 's.size': item.size, 's.stock': { $gte: item.qty } }],
+      arrayFilters: [
+        { 'v.color': item.color },
+        { 's.size': item.size, 's.stock': { $gte: item.qty } },
+      ],
     },
   );
   return result.modifiedCount === 1;

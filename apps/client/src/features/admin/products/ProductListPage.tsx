@@ -31,14 +31,22 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge, Input, Skeleton } from '@/components/ui/primitives';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useDebouncedValue } from '@/lib/useDebouncedValue';
 
 const PAGE_SIZE = 20;
 const ALL = '__all__';
 
 function totalStock(product: Product): number {
-  return product.variants.flatMap((variant) => variant.sizes).reduce((total, s) => total + s.stock, 0);
+  return product.variants
+    .flatMap((variant) => variant.sizes)
+    .reduce((total, s) => total + s.stock, 0);
 }
 
 function DeleteProductButton({ product }: { product: Product }) {
@@ -54,8 +62,8 @@ function DeleteProductButton({ product }: { product: Product }) {
       <AlertDialogContent>
         <AlertDialogTitle>Delete {product.name}?</AlertDialogTitle>
         <AlertDialogDescription>
-          This removes the listing and its photos permanently. Past orders that included this shoe are
-          not affected — their details are stored independently. This cannot be undone.
+          This removes the listing and its photos permanently. Past orders that included this shoe
+          are not affected — their details are stored independently. This cannot be undone.
         </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -106,7 +114,10 @@ export default function ProductListPage() {
         header: 'Product',
         cell: ({ row }) => (
           <div>
-            <Link to={`/admin/products/${row.original._id}`} className="font-medium hover:underline">
+            <Link
+              to={`/admin/products/${row.original._id}`}
+              className="font-medium hover:underline"
+            >
               {row.original.name}
             </Link>
             <p className="text-xs text-muted-foreground">{row.original.brand}</p>
@@ -261,7 +272,10 @@ export default function ProductListPage() {
 
             {!query.isLoading && query.data?.items.length === 0 && (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-10 text-center text-muted-foreground">
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-10 text-center text-muted-foreground"
+                >
                   No products match those filters.
                 </td>
               </tr>

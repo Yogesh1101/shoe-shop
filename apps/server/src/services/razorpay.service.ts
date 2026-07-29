@@ -33,7 +33,10 @@ export interface RazorpayOrder {
  * `receipt` is the shop's own order number, so a payment can always be traced
  * back to the order it belongs to from the Razorpay dashboard alone.
  */
-export async function createRazorpayOrder(amountPaise: number, receipt: string): Promise<RazorpayOrder> {
+export async function createRazorpayOrder(
+  amountPaise: number,
+  receipt: string,
+): Promise<RazorpayOrder> {
   const order = await getClient().orders.create({
     amount: amountPaise,
     currency: 'INR',
@@ -61,7 +64,11 @@ export function verifyPaymentSignature(params: {
 }): boolean {
   if (!features.razorpay) return false;
   const payload = `${params.razorpayOrderId}|${params.razorpayPaymentId}`;
-  return Razorpay.validateWebhookSignature(payload, params.razorpaySignature, env.RAZORPAY_KEY_SECRET);
+  return Razorpay.validateWebhookSignature(
+    payload,
+    params.razorpaySignature,
+    env.RAZORPAY_KEY_SECRET,
+  );
 }
 
 /**
@@ -73,5 +80,9 @@ export function verifyPaymentSignature(params: {
  */
 export function verifyWebhookSignature(rawBody: Buffer, signature: string): boolean {
   if (!features.razorpayWebhook) return false;
-  return Razorpay.validateWebhookSignature(rawBody.toString(), signature, env.RAZORPAY_WEBHOOK_SECRET);
+  return Razorpay.validateWebhookSignature(
+    rawBody.toString(),
+    signature,
+    env.RAZORPAY_WEBHOOK_SECRET,
+  );
 }

@@ -28,7 +28,13 @@ import { ErrorState } from '@/components/common/States';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input, Label, Separator, Skeleton, Textarea } from '@/components/ui/primitives';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ImageUploader } from '@/features/admin/products/ImageUploader';
 
 /**
@@ -48,7 +54,10 @@ const formSchema = z.object({
   type: z.enum(SHOE_TYPES),
   priceRupees: z.number({ error: 'Enter a price' }).positive({ error: 'Price is required' }),
   mrpRupees: z.number({ error: 'Enter an MRP' }).positive({ error: 'MRP is required' }),
-  hsnCode: z.string().trim().regex(/^\d{4,8}$/, { error: 'HSN must be 4-8 digits' }),
+  hsnCode: z
+    .string()
+    .trim()
+    .regex(/^\d{4,8}$/, { error: 'HSN must be 4-8 digits' }),
   tags: z.string(),
   isActive: z.boolean(),
   variants: z
@@ -208,12 +217,16 @@ export default function ProductFormPage() {
             <div>
               <Label htmlFor="name">Name</Label>
               <Input id="name" className="mt-1.5" {...register('name')} />
-              {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="brand">Brand</Label>
               <Input id="brand" className="mt-1.5" {...register('brand')} />
-              {errors.brand && <p className="mt-1 text-xs text-destructive">{errors.brand.message}</p>}
+              {errors.brand && (
+                <p className="mt-1 text-xs text-destructive">{errors.brand.message}</p>
+              )}
             </div>
           </div>
 
@@ -343,7 +356,12 @@ export default function ProductFormPage() {
         <section>
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold">Colours</h2>
-            <Button type="button" variant="outline" size="sm" onClick={() => append(emptyVariant())}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append(emptyVariant())}
+            >
               <Plus />
               Add colour
             </Button>
@@ -401,10 +419,7 @@ export default function ProductFormPage() {
                       control={control}
                       name={`variants.${index}.images`}
                       render={({ field: imagesField }) => (
-                        <ImageUploader
-                          images={imagesField.value}
-                          onChange={imagesField.onChange}
-                        />
+                        <ImageUploader images={imagesField.value} onChange={imagesField.onChange} />
                       )}
                     />
                   </div>
@@ -414,7 +429,10 @@ export default function ProductFormPage() {
                   <Label>Stock by size (UK)</Label>
                   <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
                     {SHOE_SIZES.map((size, sizeIndex) => (
-                      <div key={size} className="flex items-center gap-2 rounded-md border px-2 py-1.5">
+                      <div
+                        key={size}
+                        className="flex items-center gap-2 rounded-md border px-2 py-1.5"
+                      >
                         <span className="w-6 text-xs text-muted-foreground">{size}</span>
                         <input
                           type="number"
@@ -437,7 +455,12 @@ export default function ProductFormPage() {
           <Button type="submit" size="lg" disabled={saving}>
             {saving ? 'Saving…' : isEditing ? 'Save changes' : 'Create product'}
           </Button>
-          <Button type="button" variant="outline" size="lg" onClick={() => void navigate('/admin/products')}>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={() => void navigate('/admin/products')}
+          >
             Cancel
           </Button>
         </div>

@@ -1,7 +1,11 @@
 import type { Product, ProductImage, ProductInput, ProductUpdate } from '@shoe-shop/shared';
 
 import { baseApi } from '@/app/api/baseApi';
-import { type ProductListParams, type ProductListResponse, toQueryString } from '@/app/api/productApi';
+import {
+  type ProductListParams,
+  type ProductListResponse,
+  toQueryString,
+} from '@/app/api/productApi';
 
 export const adminProductApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

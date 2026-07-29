@@ -34,7 +34,10 @@ function money(paise: number): string {
 
 function orderItemLines(order: OrderDocument): string {
   return order.items
-    .map((item) => `  ${item.qty} x ${item.name} (${item.color}, UK ${item.size}) — ${money(item.lineTotalPaise)}`)
+    .map(
+      (item) =>
+        `  ${item.qty} x ${item.name} (${item.color}, UK ${item.size}) — ${money(item.lineTotalPaise)}`,
+    )
     .join('\n');
 }
 
@@ -48,7 +51,11 @@ function orderSummaryText(order: OrderDocument): string {
   ];
   if (order.deliveryChargePaise > 0) lines.push(`Delivery: ${money(order.deliveryChargePaise)}`);
   if (order.codChargePaise > 0) lines.push(`Cash on delivery fee: ${money(order.codChargePaise)}`);
-  lines.push(`Total: ${money(order.totalPaise)}`, '', `Payment method: ${PAYMENT_METHOD_LABELS[order.paymentMethod]}`);
+  lines.push(
+    `Total: ${money(order.totalPaise)}`,
+    '',
+    `Payment method: ${PAYMENT_METHOD_LABELS[order.paymentMethod]}`,
+  );
   return lines.join('\n');
 }
 
@@ -83,7 +90,10 @@ export async function sendOrderConfirmationEmail(order: OrderDocument): Promise<
       text,
     });
   } catch (error) {
-    logger.warn({ err: error, orderNumber: order.orderNumber }, 'Could not send order confirmation email');
+    logger.warn(
+      { err: error, orderNumber: order.orderNumber },
+      'Could not send order confirmation email',
+    );
   }
 }
 
@@ -113,7 +123,10 @@ export async function sendOwnerNewOrderAlert(order: OrderDocument): Promise<void
       text,
     });
   } catch (error) {
-    logger.warn({ err: error, orderNumber: order.orderNumber }, 'Could not send new-order alert email');
+    logger.warn(
+      { err: error, orderNumber: order.orderNumber },
+      'Could not send new-order alert email',
+    );
   }
 }
 
@@ -133,6 +146,9 @@ export async function sendOrderStatusEmail(order: OrderDocument): Promise<void> 
       text,
     });
   } catch (error) {
-    logger.warn({ err: error, orderNumber: order.orderNumber }, 'Could not send order status email');
+    logger.warn(
+      { err: error, orderNumber: order.orderNumber },
+      'Could not send order status email',
+    );
   }
 }

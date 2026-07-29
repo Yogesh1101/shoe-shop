@@ -18,7 +18,9 @@ async function adminToken(): Promise<string> {
     passwordHash: await hashPassword(PASSWORD),
     tokensValidFrom: new Date(),
   });
-  const login = await request(app).post('/api/admin/login').send({ email: EMAIL, password: PASSWORD });
+  const login = await request(app)
+    .post('/api/admin/login')
+    .send({ email: EMAIL, password: PASSWORD });
   return login.body.accessToken as string;
 }
 

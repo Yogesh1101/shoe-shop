@@ -41,8 +41,12 @@ export function AlertDialogTitle(props: ComponentProps<typeof AlertDialogPrimiti
   return <AlertDialogPrimitive.Title className="text-base font-semibold" {...props} />;
 }
 
-export function AlertDialogDescription(props: ComponentProps<typeof AlertDialogPrimitive.Description>) {
-  return <AlertDialogPrimitive.Description className="mt-2 text-sm text-muted-foreground" {...props} />;
+export function AlertDialogDescription(
+  props: ComponentProps<typeof AlertDialogPrimitive.Description>,
+) {
+  return (
+    <AlertDialogPrimitive.Description className="mt-2 text-sm text-muted-foreground" {...props} />
+  );
 }
 
 export function AlertDialogFooter({ className, ...props }: ComponentProps<'div'>) {

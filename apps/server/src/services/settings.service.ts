@@ -1,4 +1,9 @@
-import { type PublicSettings, type Settings as SettingsShape, settingsSchema, type SettingsUpdate } from '@shoe-shop/shared';
+import {
+  type PublicSettings,
+  type Settings as SettingsShape,
+  settingsSchema,
+  type SettingsUpdate,
+} from '@shoe-shop/shared';
 
 import { Settings, SETTINGS_ID, type SettingsDocument } from '../models/Settings.js';
 import { ApiError } from '../utils/ApiError.js';

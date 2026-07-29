@@ -21,7 +21,11 @@ import { ApiError } from '../utils/ApiError.js';
 import { logger } from '../utils/logger.js';
 import { nextInvoiceNumber, nextOrderNumber } from '../utils/sequence.js';
 import { buildQuote } from './checkout.service.js';
-import { sendOrderConfirmationEmail, sendOrderStatusEmail, sendOwnerNewOrderAlert } from './email.service.js';
+import {
+  sendOrderConfirmationEmail,
+  sendOrderStatusEmail,
+  sendOwnerNewOrderAlert,
+} from './email.service.js';
 import { createRazorpayOrder, verifyPaymentSignature } from './razorpay.service.js';
 import { getSettings } from './settings.service.js';
 import { commitStock, restoreStock, type StockAdjustment } from './stock.service.js';
@@ -35,7 +39,12 @@ export interface PaginatedAdminOrders {
 }
 
 function toStockAdjustment(item: OrderItemDoc): StockAdjustment {
-  return { productId: item.productId.toString(), color: item.color, size: item.size, qty: item.qty };
+  return {
+    productId: item.productId.toString(),
+    color: item.color,
+    size: item.size,
+    qty: item.qty,
+  };
 }
 
 function toStatusHistory(order: OrderDocument): OrderStatusEvent[] {
@@ -244,7 +253,10 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         note: 'Stock sold out before the order could be confirmed',
       });
       await order.save();
-      throw ApiError.conflict('STOCK_CHANGED', 'One or more items sold out while you were checking out');
+      throw ApiError.conflict(
+        'STOCK_CHANGED',
+        'One or more items sold out while you were checking out',
+      );
     }
 
     order.stockCommitted = true;
@@ -319,7 +331,10 @@ async function finalizePaidOrder(
     claimed.notes = [claimed.notes, 'Stock could not be reserved after payment — review manually.']
       .filter(Boolean)
       .join(' ');
-    logger.error({ orderNumber: claimed.orderNumber }, 'Paid order could not commit stock; needs manual review');
+    logger.error(
+      { orderNumber: claimed.orderNumber },
+      'Paid order could not commit stock; needs manual review',
+    );
   }
 
   await claimed.save();
@@ -356,7 +371,11 @@ export async function verifyRazorpayPayment(
     throw ApiError.badRequest('Payment verification failed');
   }
 
-  const finalized = await finalizePaidOrder(order, input.razorpayPaymentId, input.razorpaySignature);
+  const finalized = await finalizePaidOrder(
+    order,
+    input.razorpayPaymentId,
+    input.razorpaySignature,
+  );
   return toPublicOrder(finalized);
 }
 
@@ -436,7 +455,9 @@ export async function listOrders(query: AdminOrderListQuery): Promise<PaginatedA
   // so the admin's list only shows things that actually happened.
   if (!query.includeAbandoned) {
     const cutoff = new Date(Date.now() - ABANDONED_ORDER_TTL_HOURS * 60 * 60 * 1000);
-    filter.$nor = [{ paymentMethod: 'razorpay', paymentStatus: 'pending', createdAt: { $lt: cutoff } }];
+    filter.$nor = [
+      { paymentMethod: 'razorpay', paymentStatus: 'pending', createdAt: { $lt: cutoff } },
+    ];
   }
 
   const [orders, total] = await Promise.all([
@@ -469,7 +490,10 @@ export async function getAdminOrder(id: string): Promise<AdminOrder> {
  * exactly once — `stockRestored` guards a double-click or a retried request
  * from putting the same pair back into inventory twice.
  */
-export async function updateOrderStatus(id: string, input: UpdateOrderStatusInput): Promise<AdminOrder> {
+export async function updateOrderStatus(
+  id: string,
+  input: UpdateOrderStatusInput,
+): Promise<AdminOrder> {
   const order = await getOrderDocument(id);
 
   const allowed: readonly string[] = ORDER_STATUS_FLOW[order.status];

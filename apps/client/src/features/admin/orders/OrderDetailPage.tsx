@@ -66,9 +66,12 @@ export default function OrderDetailPage() {
   async function downloadInvoice() {
     setDownloading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL ?? ''}/api/admin/orders/${id}/invoice`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL ?? ''}/api/admin/orders/${id}/invoice`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
       if (!response.ok) throw new Error('The invoice could not be downloaded');
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -118,7 +121,8 @@ export default function OrderDetailPage() {
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge>{ORDER_STATUS_LABELS[order.status]}</Badge>
         <Badge variant="outline">
-          {PAYMENT_METHOD_LABELS[order.paymentMethod]} · {PAYMENT_STATUS_LABELS[order.paymentStatus]}
+          {PAYMENT_METHOD_LABELS[order.paymentMethod]} ·{' '}
+          {PAYMENT_STATUS_LABELS[order.paymentStatus]}
         </Badge>
       </div>
 
@@ -127,7 +131,8 @@ export default function OrderDetailPage() {
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-highlight" aria-hidden />
           <span>
             This customer has {order.priorCancelledCount} previous cancelled{' '}
-            {order.priorCancelledCount === 1 ? 'order' : 'orders'}. Worth confirming before dispatch.
+            {order.priorCancelledCount === 1 ? 'order' : 'orders'}. Worth confirming before
+            dispatch.
           </span>
         </div>
       )}
@@ -157,7 +162,10 @@ export default function OrderDetailPage() {
       <h2 className="text-sm font-semibold">Items</h2>
       <ul className="mt-4 space-y-3 text-sm">
         {order.items.map((item) => (
-          <li key={`${item.productId}|${item.color}|${item.size}`} className="flex justify-between gap-3">
+          <li
+            key={`${item.productId}|${item.color}|${item.size}`}
+            className="flex justify-between gap-3"
+          >
             <span className="text-muted-foreground">
               {item.name}
               <span className="block text-xs">
@@ -180,7 +188,9 @@ export default function OrderDetailPage() {
         </div>
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Delivery</dt>
-          <dd>{order.deliveryChargePaise === 0 ? 'Free' : <Money paise={order.deliveryChargePaise} />}</dd>
+          <dd>
+            {order.deliveryChargePaise === 0 ? 'Free' : <Money paise={order.deliveryChargePaise} />}
+          </dd>
         </div>
         {order.codChargePaise > 0 && (
           <div className="flex justify-between">
@@ -215,7 +225,9 @@ export default function OrderDetailPage() {
           <li key={index} className="flex justify-between gap-3">
             <span>
               {ORDER_STATUS_LABELS[event.status]}
-              {event.note && <span className="block text-xs text-muted-foreground">{event.note}</span>}
+              {event.note && (
+                <span className="block text-xs text-muted-foreground">{event.note}</span>
+              )}
             </span>
             <span className="shrink-0 text-xs text-muted-foreground">{formatDate(event.at)}</span>
           </li>

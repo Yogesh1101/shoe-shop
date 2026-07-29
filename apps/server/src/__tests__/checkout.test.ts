@@ -203,7 +203,9 @@ describeWithMongo('checkout quote', () => {
 
     // pricesIncludeTax is true: the tax breakdown is informational only.
     expect(response.body.totalPaise).toBe(
-      response.body.subtotalPaise + response.body.deliveryChargePaise + response.body.codChargePaise,
+      response.body.subtotalPaise +
+        response.body.deliveryChargePaise +
+        response.body.codChargePaise,
     );
   });
 

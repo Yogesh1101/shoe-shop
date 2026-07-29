@@ -16,7 +16,11 @@ export const orderApi = baseApi.injectEndpoints({
 
     /** The checkout page's callback once Razorpay Checkout reports success. */
     verifyPayment: build.mutation<PublicOrder, { orderId: string } & VerifyPaymentInput>({
-      query: ({ orderId, ...body }) => ({ url: `/orders/${orderId}/verify-payment`, method: 'POST', body }),
+      query: ({ orderId, ...body }) => ({
+        url: `/orders/${orderId}/verify-payment`,
+        method: 'POST',
+        body,
+      }),
     }),
 
     /** Guest order lookup — there are no accounts, so the phone number on the order is the key. */

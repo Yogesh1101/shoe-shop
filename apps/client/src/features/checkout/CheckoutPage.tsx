@@ -22,7 +22,13 @@ import { Money } from '@/components/common/Money';
 import { EmptyState, ErrorState } from '@/components/common/States';
 import { Button } from '@/components/ui/button';
 import { Input, Label, Separator, Skeleton } from '@/components/ui/primitives';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { clearCart } from '@/features/cart/cartSlice';
 import { loadRazorpayCheckout } from '@/lib/razorpay';
 import { useDebouncedValue } from '@/lib/useDebouncedValue';
@@ -313,7 +319,11 @@ export default function CheckoutPage() {
           <h2 className="text-sm font-semibold">Order summary</h2>
 
           {quoteResult.isError && (
-            <ErrorState error={quoteResult.error} onRetry={() => void quoteResult.reset()} className="py-8" />
+            <ErrorState
+              error={quoteResult.error}
+              onRetry={() => void quoteResult.reset()}
+              className="py-8"
+            />
           )}
 
           {!quoteResult.isError && !quote && (
@@ -374,7 +384,11 @@ export default function CheckoutPage() {
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Delivery</dt>
                   <dd>
-                    {quote.deliveryChargePaise === 0 ? 'Free' : <Money paise={quote.deliveryChargePaise} />}
+                    {quote.deliveryChargePaise === 0 ? (
+                      'Free'
+                    ) : (
+                      <Money paise={quote.deliveryChargePaise} />
+                    )}
                   </dd>
                 </div>
                 {paymentMethod === 'cod' && quote.codChargePaise > 0 && (
@@ -398,12 +412,13 @@ export default function CheckoutPage() {
                 ))}
               </dl>
 
-              {quote.freeDeliveryShortfallPaise !== null && quote.freeDeliveryShortfallPaise > 0 && (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Add <Money paise={quote.freeDeliveryShortfallPaise} className="font-medium" /> more for
-                  free delivery.
-                </p>
-              )}
+              {quote.freeDeliveryShortfallPaise !== null &&
+                quote.freeDeliveryShortfallPaise > 0 && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Add <Money paise={quote.freeDeliveryShortfallPaise} className="font-medium" />{' '}
+                    more for free delivery.
+                  </p>
+                )}
 
               <Separator className="my-4" />
 
@@ -417,7 +432,11 @@ export default function CheckoutPage() {
                 size="lg"
                 className="mt-6 w-full"
                 disabled={
-                  hasStockIssues || pincodeUnserviceable || codBlockedByCap || quoteResult.isLoading || placing
+                  hasStockIssues ||
+                  pincodeUnserviceable ||
+                  codBlockedByCap ||
+                  quoteResult.isLoading ||
+                  placing
                 }
               >
                 {placing && <Loader2 className="animate-spin" />}

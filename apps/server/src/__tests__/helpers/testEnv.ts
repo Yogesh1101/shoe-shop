@@ -9,3 +9,10 @@ process.env.MONGODB_URI ??=
 process.env.CLIENT_URL ??= 'http://localhost:5173';
 process.env.ADMIN_EMAIL ??= 'owner@example.com';
 process.env.ADMIN_PASSWORD ??= 'test-password-123';
+
+// Dummy but well-formed Razorpay config, so order-service tests can exercise
+// the real signature-verification math end to end. The SDK's network calls
+// (`orders.create`) are mocked per test file rather than hitting Razorpay.
+process.env.RAZORPAY_KEY_ID ??= 'rzp_test_dummy';
+process.env.RAZORPAY_KEY_SECRET ??= 'test-razorpay-key-secret';
+process.env.RAZORPAY_WEBHOOK_SECRET ??= 'test-razorpay-webhook-secret';

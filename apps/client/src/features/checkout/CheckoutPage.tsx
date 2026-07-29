@@ -7,20 +7,24 @@ import {
   PAYMENT_METHODS,
   type PaymentMethod,
 } from '@shoe-shop/shared';
-import { AlertTriangle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { AlertTriangle, Loader2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { normaliseError } from '@/app/api/baseApi';
 import { useGetQuoteMutation } from '@/app/api/checkoutApi';
+import { useCreateOrderMutation, useVerifyPaymentMutation } from '@/app/api/orderApi';
 import { useGetPublicSettingsQuery } from '@/app/api/settingsApi';
-import { useAppSelector } from '@/app/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Money } from '@/components/common/Money';
 import { EmptyState, ErrorState } from '@/components/common/States';
 import { Button } from '@/components/ui/button';
 import { Input, Label, Separator, Skeleton } from '@/components/ui/primitives';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { clearCart } from '@/features/cart/cartSlice';
+import { loadRazorpayCheckout } from '@/lib/razorpay';
 import { useDebouncedValue } from '@/lib/useDebouncedValue';
 import { cn } from '@/lib/utils';
 
@@ -38,8 +42,15 @@ function FieldError({ message }: { message?: string }) {
 
 export default function CheckoutPage() {
   const items = useAppSelector((state) => state.cart.items);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { data: publicSettings } = useGetPublicSettingsQuery();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('razorpay');
+  const [placing, setPlacing] = useState(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
+  const [createOrder] = useCreateOrderMutation();
+  const [verifyPayment] = useVerifyPaymentMutation();
 
   const {
     register,
@@ -86,12 +97,67 @@ export default function CheckoutPage() {
     quote !== undefined &&
     quote.totalPaise > quote.subtotalPaise + quote.deliveryChargePaise + quote.codChargePaise;
 
-  function onValid() {
-    // Razorpay and order placement land in the next phase — this confirms the
-    // address and pricing are ready without charging anything yet.
-    toast.success('Order details confirmed', {
-      description: 'Payment goes live in the next build. Nothing has been charged.',
-    });
+  /**
+   * Places the order, then either finishes immediately (COD) or opens
+   * Razorpay Checkout and finishes once payment is confirmed.
+   *
+   * The server re-quotes and re-checks stock itself — this submit handler
+   * only has to get the customer to that point and react to what comes back.
+   */
+  async function onValid(customer: Customer) {
+    setPlacing(true);
+    try {
+      const response = await createOrder({
+        items,
+        customer,
+        paymentMethod,
+        website: honeypotRef.current?.value || undefined,
+      }).unwrap();
+
+      if (response.paymentMethod === 'cod' || !response.razorpay) {
+        dispatch(clearCart());
+        void navigate(`/order/${response.orderNumber}`, { state: { phone: customer.phone } });
+        return;
+      }
+
+      const { razorpay } = response;
+      const Razorpay = await loadRazorpayCheckout();
+
+      const checkout = new Razorpay({
+        key: razorpay.keyId,
+        amount: razorpay.amountPaise,
+        currency: razorpay.currency,
+        order_id: razorpay.orderId,
+        name: publicSettings?.shopName ?? 'Shoe Shop',
+        prefill: { name: customer.name, email: customer.email, contact: customer.phone },
+        handler: (paymentResponse) => {
+          void (async () => {
+            try {
+              await verifyPayment({
+                orderId: response.orderId,
+                razorpayOrderId: paymentResponse.razorpay_order_id,
+                razorpayPaymentId: paymentResponse.razorpay_payment_id,
+                razorpaySignature: paymentResponse.razorpay_signature,
+              }).unwrap();
+
+              dispatch(clearCart());
+              void navigate(`/order/${response.orderNumber}`, { state: { phone: customer.phone } });
+            } catch (error) {
+              toast.error('We could not confirm your payment', {
+                description: `${normaliseError(error).message} If you were charged, track your order or contact us with the payment details.`,
+              });
+            } finally {
+              setPlacing(false);
+            }
+          })();
+        },
+        modal: { ondismiss: () => setPlacing(false) },
+      });
+      checkout.open();
+    } catch (error) {
+      toast.error('Could not place your order', { description: normaliseError(error).message });
+      setPlacing(false);
+    }
   }
 
   if (items.length === 0) {
@@ -118,6 +184,19 @@ export default function CheckoutPage() {
         onSubmit={(event) => void handleSubmit(onValid)(event)}
         className="mt-8 grid gap-10 lg:grid-cols-[1fr_22rem]"
       >
+        {/* Honeypot: invisible to a real shopper, irresistible to a bot that
+            fills in every field it finds. The server rejects any submission
+            where this is non-empty. */}
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          ref={honeypotRef}
+          className="absolute -left-[9999px] size-px opacity-0"
+        />
+
         <div className="space-y-8">
           <section>
             <h2 className="text-sm font-semibold">Contact</h2>
@@ -337,13 +416,18 @@ export default function CheckoutPage() {
                 type="submit"
                 size="lg"
                 className="mt-6 w-full"
-                disabled={hasStockIssues || pincodeUnserviceable || codBlockedByCap || quoteResult.isLoading}
+                disabled={
+                  hasStockIssues || pincodeUnserviceable || codBlockedByCap || quoteResult.isLoading || placing
+                }
               >
-                Place order
+                {placing && <Loader2 className="animate-spin" />}
+                {placing ? 'Placing order…' : 'Place order'}
               </Button>
-              <p className="mt-2 text-center text-xs text-muted-foreground">
-                Payment happens in the next build — placing an order will not charge you yet.
-              </p>
+              {paymentMethod === 'razorpay' && (
+                <p className="mt-2 text-center text-xs text-muted-foreground">
+                  You'll be asked to pay via Razorpay on the next step.
+                </p>
+              )}
             </>
           )}
         </aside>

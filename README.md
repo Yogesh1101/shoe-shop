@@ -5,8 +5,9 @@ phone calls. Customers browse the catalog with live per-size stock, order
 themselves, and pay by Razorpay or cash on delivery. Orders land in one admin
 dashboard with GST invoices.
 
-> **Status:** under construction — the shop is browsable but does not yet
-> take payments. See the phase checklist at the bottom.
+> **Status:** under construction — the shop takes real orders and payments,
+> but there is no admin dashboard yet to manage them. See the phase checklist
+> at the bottom.
 
 ---
 
@@ -147,7 +148,7 @@ finding we have consciously accepted. Review advisories manually when upgrading.
 - [x] 5 — Client foundation: Vite, Tailwind, store, UI primitives
 - [x] 6 — Storefront: home, catalog, product page, cart
 - [x] 7 — Pricing, GST, checkout
-- [ ] 8 — Payments, orders, invoices, emails
+- [x] 8 — Payments, orders, invoices, emails
 - [ ] 9 — Admin panel
 - [ ] 10 — Policy pages, deployment, docs
 

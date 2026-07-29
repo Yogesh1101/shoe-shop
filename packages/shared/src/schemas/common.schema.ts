@@ -64,6 +64,14 @@ export const addressSchema = z.object({
   pincode: pincodeSchema,
 });
 
+/**
+ * Route params. Express 5 types `req.params` values as `string | string[] |
+ * undefined`, so params go through validation like everything else — which also
+ * rejects a malformed id before it reaches Mongo and becomes a CastError.
+ */
+export const idParamSchema = z.object({ id: objectIdSchema });
+export const slugParamSchema = z.object({ slug: slugSchema });
+
 /** Shape every error response takes, so the client normalises it in one place. */
 export const apiErrorSchema = z.object({
   error: z.object({
@@ -88,6 +96,8 @@ export function paginatedSchema<T extends z.ZodTypeAny>(itemSchema: T) {
   });
 }
 
+export type IdParam = z.infer<typeof idParamSchema>;
+export type SlugParam = z.infer<typeof slugParamSchema>;
 export type Address = z.infer<typeof addressSchema>;
 export type ApiErrorBody = z.infer<typeof apiErrorSchema>;
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>;

@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 
 import { getSettings, toPublicSettings } from '../services/settings.service.js';
 import { authRoutes } from './admin/auth.routes.js';
+import { adminProductRoutes } from './admin/product.routes.js';
+import { productRoutes } from './product.routes.js';
 
 export const apiRoutes: Router = Router();
 
@@ -29,4 +31,7 @@ apiRoutes.get('/settings/public', async (_req, res) => {
   res.json(toPublicSettings(settings));
 });
 
+apiRoutes.use('/products', productRoutes);
+
 apiRoutes.use('/admin', authRoutes);
+apiRoutes.use('/admin/products', adminProductRoutes);

@@ -6,8 +6,9 @@ themselves, and pay by Razorpay or cash on delivery. Orders land in one admin
 dashboard with GST invoices.
 
 > **Status:** under construction — the shop takes real orders and payments,
-> but there is no admin dashboard yet to manage them. See the phase checklist
-> at the bottom.
+> and the owner can now manage products, orders and settings from `/admin`.
+> Policy pages and deployment are what's left. See the phase checklist at the
+> bottom.
 
 ---
 
@@ -149,7 +150,7 @@ finding we have consciously accepted. Review advisories manually when upgrading.
 - [x] 6 — Storefront: home, catalog, product page, cart
 - [x] 7 — Pricing, GST, checkout
 - [x] 8 — Payments, orders, invoices, emails
-- [ ] 9 — Admin panel
+- [x] 9 — Admin panel
 - [ ] 10 — Policy pages, deployment, docs
 
 Deployment instructions and the full account-setup walkthrough land in phase 10.

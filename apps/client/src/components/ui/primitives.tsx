@@ -23,6 +23,21 @@ export function Input({ className, type = 'text', ...props }: ComponentProps<'in
   );
 }
 
+export function Textarea({ className, rows = 4, ...props }: ComponentProps<'textarea'>) {
+  return (
+    <textarea
+      rows={rows}
+      className={cn(
+        'flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm',
+        'placeholder:text-muted-foreground',
+        'disabled:cursor-not-allowed disabled:opacity-50',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function Label({ className, ...props }: ComponentProps<'label'>) {
   return (
     <label className={cn('text-sm leading-none font-medium select-none', className)} {...props} />

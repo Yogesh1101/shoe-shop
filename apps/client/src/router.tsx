@@ -21,9 +21,35 @@ const CheckoutPage = lazy(() => import('@/features/checkout/CheckoutPage'));
 const OrderStatusPage = lazy(() => import('@/features/order/OrderStatusPage'));
 const TrackOrderPage = lazy(() => import('@/features/order/TrackOrderPage'));
 
+const LoginPage = lazy(() => import('@/features/admin/auth/LoginPage'));
+const RequireAdmin = lazy(() =>
+  import('@/features/admin/auth/RequireAdmin').then((m) => ({ default: m.RequireAdmin })),
+);
+const AdminLayout = lazy(() =>
+  import('@/features/admin/layout/AdminLayout').then((m) => ({ default: m.AdminLayout })),
+);
+const DashboardPage = lazy(() => import('@/features/admin/dashboard/DashboardPage'));
+const ProductListPage = lazy(() => import('@/features/admin/products/ProductListPage'));
+const ProductFormPage = lazy(() => import('@/features/admin/products/ProductFormPage'));
+const OrderListPage = lazy(() => import('@/features/admin/orders/OrderListPage'));
+const OrderDetailPage = lazy(() => import('@/features/admin/orders/OrderDetailPage'));
+const SettingsPage = lazy(() => import('@/features/admin/settings/SettingsPage'));
+
 function suspended(element: ReactNode): ReactNode {
   return <Suspense fallback={<PageFallback />}>{element}</Suspense>;
 }
+
+/**
+ * One boundary for the whole admin subtree rather than one per route: React
+ * Suspense catches a lazy load from any descendant, however deep, so
+ * `RequireAdmin`, `AdminLayout` and the page itself can each ship their own
+ * chunk while a visitor only ever sees a single loading flash.
+ */
+const ADMIN_FALLBACK = (
+  <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+    Loading…
+  </div>
+);
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +63,25 @@ export const router = createBrowserRouter([
       { path: '/order/:orderNumber', element: suspended(<OrderStatusPage />) },
       { path: '/track', element: suspended(<TrackOrderPage />) },
       { path: '*', element: <NotFound /> },
+    ],
+  },
+  { path: '/admin/login', element: <Suspense fallback={ADMIN_FALLBACK}>{<LoginPage />}</Suspense> },
+  {
+    path: '/admin',
+    element: <Suspense fallback={ADMIN_FALLBACK}>{<RequireAdmin />}</Suspense>,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <DashboardPage /> },
+          { path: 'products', element: <ProductListPage /> },
+          { path: 'products/new', element: <ProductFormPage /> },
+          { path: 'products/:id', element: <ProductFormPage /> },
+          { path: 'orders', element: <OrderListPage /> },
+          { path: 'orders/:id', element: <OrderDetailPage /> },
+          { path: 'settings', element: <SettingsPage /> },
+        ],
+      },
     ],
   },
 ]);

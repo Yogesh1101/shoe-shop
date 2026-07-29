@@ -32,7 +32,7 @@ export interface ProductListParams {
  * the server's `csvArray` transform already parses — and it keeps the shareable
  * catalog URL readable instead of repeating the key five times.
  */
-function toQueryString(params: ProductListParams): string {
+export function toQueryString(params: ProductListParams): string {
   const search = new URLSearchParams();
 
   for (const [key, value] of Object.entries(params)) {

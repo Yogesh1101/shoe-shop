@@ -146,7 +146,7 @@ finding we have consciously accepted. Review advisories manually when upgrading.
 - [x] 4 — Product API + Cloudinary uploads
 - [x] 5 — Client foundation: Vite, Tailwind, store, UI primitives
 - [x] 6 — Storefront: home, catalog, product page, cart
-- [ ] 7 — Pricing, GST, checkout
+- [x] 7 — Pricing, GST, checkout
 - [ ] 8 — Payments, orders, invoices, emails
 - [ ] 9 — Admin panel
 - [ ] 10 — Policy pages, deployment, docs

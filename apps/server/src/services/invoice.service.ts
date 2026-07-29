@@ -13,7 +13,10 @@ import { ApiError } from '../utils/ApiError.js';
  * ephemeral, and the order document already holds everything the PDF needs —
  * regenerating it is cheap and never goes stale.
  */
-export async function generateInvoicePdf(order: OrderDocument, settings: SettingsDocument): Promise<Buffer> {
+export async function generateInvoicePdf(
+  order: OrderDocument,
+  settings: SettingsDocument,
+): Promise<Buffer> {
   if (!order.invoice) {
     throw ApiError.conflict('INVOICE_NOT_READY', 'This order does not have an invoice yet');
   }
@@ -47,7 +50,9 @@ export async function generateInvoicePdf(order: OrderDocument, settings: Setting
   doc.text(order.customer.name);
   doc.text(order.customer.address.line1);
   if (order.customer.address.line2) doc.text(order.customer.address.line2);
-  doc.text(`${order.customer.address.city}, ${order.customer.address.state} ${order.customer.address.pincode}`);
+  doc.text(
+    `${order.customer.address.city}, ${order.customer.address.state} ${order.customer.address.pincode}`,
+  );
   doc.text(`Phone: ${order.customer.phone}`);
 
   doc.moveDown(1.5);
@@ -64,7 +69,10 @@ export async function generateInvoicePdf(order: OrderDocument, settings: Setting
     doc.text(values.name, columns.name, y, { width: columns.hsn - columns.name - 8 });
     doc.text(values.hsn, columns.hsn, y, { width: columns.qty - columns.hsn - 8 });
     doc.text(values.qty, columns.qty, y, { width: columns.rate - columns.qty - 8, align: 'right' });
-    doc.text(values.rate, columns.rate, y, { width: columns.amount - columns.rate - 8, align: 'right' });
+    doc.text(values.rate, columns.rate, y, {
+      width: columns.amount - columns.rate - 8,
+      align: 'right',
+    });
     doc.text(values.amount, columns.amount, y, { width: 50, align: 'right' });
   }
 
@@ -118,7 +126,9 @@ export async function generateInvoicePdf(order: OrderDocument, settings: Setting
   doc
     .fontSize(8)
     .fillColor('#888')
-    .text('This is a computer-generated invoice and does not require a signature.', { align: 'center' });
+    .text('This is a computer-generated invoice and does not require a signature.', {
+      align: 'center',
+    });
 
   doc.end();
   return done;

@@ -109,7 +109,8 @@ export async function buildQuote(request: QuoteRequest): Promise<Quote> {
   // No delivery charge on a cart that cannot be fulfilled at all — there is
   // nothing to ship.
   const freeDeliveryApplies = lines.length > 0 && subtotalPaise >= settings.freeDeliveryAbovePaise;
-  const deliveryChargePaise = lines.length === 0 || freeDeliveryApplies ? 0 : settings.deliveryChargePaise;
+  const deliveryChargePaise =
+    lines.length === 0 || freeDeliveryApplies ? 0 : settings.deliveryChargePaise;
   const freeDeliveryShortfallPaise = freeDeliveryApplies
     ? null
     : Math.max(0, settings.freeDeliveryAbovePaise - subtotalPaise);
@@ -120,14 +121,18 @@ export async function buildQuote(request: QuoteRequest): Promise<Quote> {
   const codAvailable =
     settings.codEnabled &&
     (settings.codMaxOrderValuePaise === 0 || codOrderValuePaise <= settings.codMaxOrderValuePaise);
-  const codChargePaise = request.paymentMethod === 'cod' && codAvailable ? settings.codExtraChargePaise : 0;
+  const codChargePaise =
+    request.paymentMethod === 'cod' && codAvailable ? settings.codExtraChargePaise : 0;
 
   const tax = computeTaxBreakdown(lines, settings, request.state);
 
   // Tax-inclusive prices already contain GST, so it is only added on top when
   // the shop's prices are configured as tax-exclusive.
   const totalPaise =
-    subtotalPaise + deliveryChargePaise + codChargePaise + (settings.pricesIncludeTax ? 0 : tax.totalPaise);
+    subtotalPaise +
+    deliveryChargePaise +
+    codChargePaise +
+    (settings.pricesIncludeTax ? 0 : tax.totalPaise);
 
   const pincodeServiceable = request.pincode
     ? !settings.blockedPincodes.includes(request.pincode)
@@ -149,7 +154,9 @@ export async function buildQuote(request: QuoteRequest): Promise<Quote> {
 
 /** The GST slab that applies to a given per-pair price, banded ascending by `maxPricePaise`. */
 function slabRateFor(unitPricePaise: number, slabs: GstSlabDoc[]): number {
-  const match = slabs.find((slab) => slab.maxPricePaise === null || unitPricePaise <= slab.maxPricePaise);
+  const match = slabs.find(
+    (slab) => slab.maxPricePaise === null || unitPricePaise <= slab.maxPricePaise,
+  );
   return match?.rateBps ?? 0;
 }
 
@@ -211,7 +218,11 @@ function computeTaxBreakdown(
     totalPaise += group.taxPaise;
 
     if (mode === 'igst') {
-      taxLines.push({ label: `IGST ${ratePercentLabel(rateBps)}%`, rateBps, amountPaise: group.taxPaise });
+      taxLines.push({
+        label: `IGST ${ratePercentLabel(rateBps)}%`,
+        rateBps,
+        amountPaise: group.taxPaise,
+      });
       continue;
     }
 

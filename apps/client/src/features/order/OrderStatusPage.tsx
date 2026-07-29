@@ -1,8 +1,4 @@
-import {
-  ORDER_STATUS_LABELS,
-  PAYMENT_METHOD_LABELS,
-  type PaymentStatus,
-} from '@shoe-shop/shared';
+import { ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS, type PaymentStatus } from '@shoe-shop/shared';
 import { Download } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
@@ -130,7 +126,8 @@ export default function OrderStatusPage() {
           {ORDER_STATUS_LABELS[order.status]}
         </span>
         <span className="rounded-full bg-accent px-3 py-1 text-sm font-medium">
-          {PAYMENT_METHOD_LABELS[order.paymentMethod]} · {PAYMENT_STATUS_LABELS[order.paymentStatus]}
+          {PAYMENT_METHOD_LABELS[order.paymentMethod]} ·{' '}
+          {PAYMENT_STATUS_LABELS[order.paymentStatus]}
         </span>
       </div>
 
@@ -139,7 +136,10 @@ export default function OrderStatusPage() {
       <h2 className="text-sm font-semibold">Items</h2>
       <ul className="mt-4 space-y-3 text-sm">
         {order.items.map((item) => (
-          <li key={`${item.productId}|${item.color}|${item.size}`} className="flex justify-between gap-3">
+          <li
+            key={`${item.productId}|${item.color}|${item.size}`}
+            className="flex justify-between gap-3"
+          >
             <span className="text-muted-foreground">
               {item.name}
               <span className="block text-xs">
@@ -162,7 +162,9 @@ export default function OrderStatusPage() {
         </div>
         <div className="flex justify-between">
           <dt className="text-muted-foreground">Delivery</dt>
-          <dd>{order.deliveryChargePaise === 0 ? 'Free' : <Money paise={order.deliveryChargePaise} />}</dd>
+          <dd>
+            {order.deliveryChargePaise === 0 ? 'Free' : <Money paise={order.deliveryChargePaise} />}
+          </dd>
         </div>
         {order.codChargePaise > 0 && (
           <div className="flex justify-between">
@@ -197,7 +199,9 @@ export default function OrderStatusPage() {
           <li key={index} className="flex justify-between gap-3">
             <span>
               {ORDER_STATUS_LABELS[event.status]}
-              {event.note && <span className="block text-xs text-muted-foreground">{event.note}</span>}
+              {event.note && (
+                <span className="block text-xs text-muted-foreground">{event.note}</span>
+              )}
             </span>
             <span className="shrink-0 text-xs text-muted-foreground">{formatDate(event.at)}</span>
           </li>

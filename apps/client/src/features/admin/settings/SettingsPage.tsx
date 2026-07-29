@@ -13,13 +13,22 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { useGetAdminSettingsQuery, useUpdateAdminSettingsMutation } from '@/app/api/adminSettingsApi';
+import {
+  useGetAdminSettingsQuery,
+  useUpdateAdminSettingsMutation,
+} from '@/app/api/adminSettingsApi';
 import { normaliseError } from '@/app/api/baseApi';
 import { ErrorState } from '@/components/common/States';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input, Label, Separator, Skeleton, Textarea } from '@/components/ui/primitives';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 /** Rupees and whole-percent GST rates in the form; converted to paise/bps at submit. */
 const formSchema = z.object({
@@ -177,7 +186,12 @@ export default function SettingsPage() {
             </div>
             <div>
               <Label htmlFor="contactEmail">Contact email</Label>
-              <Input id="contactEmail" type="email" className="mt-1.5" {...register('contactEmail')} />
+              <Input
+                id="contactEmail"
+                type="email"
+                className="mt-1.5"
+                {...register('contactEmail')}
+              />
             </div>
             <div className="sm:col-span-2">
               <Label htmlFor="instagramUrl">Instagram URL</Label>
@@ -309,7 +323,9 @@ export default function SettingsPage() {
               <div>
                 <Label htmlFor="gstin">GSTIN</Label>
                 <Input id="gstin" className="mt-1.5" {...register('gstin')} />
-                {errors.gstin && <p className="mt-1 text-xs text-destructive">{errors.gstin.message}</p>}
+                {errors.gstin && (
+                  <p className="mt-1 text-xs text-destructive">{errors.gstin.message}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="sellerState">Seller state</Label>
@@ -334,7 +350,12 @@ export default function SettingsPage() {
               </div>
               <div className="sm:col-span-2">
                 <Label htmlFor="sellerAddress">Seller address (shown on invoices)</Label>
-                <Textarea id="sellerAddress" rows={2} className="mt-1.5" {...register('sellerAddress')} />
+                <Textarea
+                  id="sellerAddress"
+                  rows={2}
+                  className="mt-1.5"
+                  {...register('sellerAddress')}
+                />
               </div>
               <div>
                 <Label htmlFor="hsnDefault">Default HSN code</Label>
@@ -396,7 +417,9 @@ export default function SettingsPage() {
                     return (
                       <div key={field.id} className="flex items-center gap-2">
                         {isLast ? (
-                          <span className="flex-1 text-sm text-muted-foreground">Above all other slabs</span>
+                          <span className="flex-1 text-sm text-muted-foreground">
+                            Above all other slabs
+                          </span>
                         ) : (
                           <div className="flex flex-1 items-center gap-2">
                             <span className="text-sm text-muted-foreground">Up to ₹</span>
@@ -404,7 +427,9 @@ export default function SettingsPage() {
                               type="number"
                               step="0.01"
                               min="0"
-                              {...register(`gstSlabs.${index}.maxPriceRupees`, { valueAsNumber: true })}
+                              {...register(`gstSlabs.${index}.maxPriceRupees`, {
+                                valueAsNumber: true,
+                              })}
                             />
                           </div>
                         )}

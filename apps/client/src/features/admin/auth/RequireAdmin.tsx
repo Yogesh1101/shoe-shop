@@ -4,7 +4,11 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { useRefreshMutation } from '@/app/api/authApi';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { credentialsReceived, initialisationFinished, signedOut } from '@/features/admin/auth/authSlice';
+import {
+  credentialsReceived,
+  initialisationFinished,
+  signedOut,
+} from '@/features/admin/auth/authSlice';
 
 /**
  * Gate for every `/admin/*` route except the login page.

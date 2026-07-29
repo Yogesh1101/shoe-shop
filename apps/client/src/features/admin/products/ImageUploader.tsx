@@ -43,7 +43,10 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
     <div>
       <div className="flex flex-wrap gap-3">
         {images.map((image, index) => (
-          <div key={image.publicId} className="group relative size-20 overflow-hidden rounded-md border">
+          <div
+            key={image.publicId}
+            className="group relative size-20 overflow-hidden rounded-md border"
+          >
             <CloudinaryImage src={image.url} alt="" width={160} sizes="80px" />
             <button
               type="button"

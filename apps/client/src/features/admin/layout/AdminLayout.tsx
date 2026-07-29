@@ -37,7 +37,9 @@ export function AdminLayout() {
         <div className="flex h-full flex-col">
           <div className="px-2 py-2">
             <p className="text-sm font-semibold tracking-tight">Shoe Shop admin</p>
-            {admin && <p className="mt-0.5 truncate text-xs text-muted-foreground">{admin.email}</p>}
+            {admin && (
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{admin.email}</p>
+            )}
           </div>
 
           <nav className="mt-4 flex flex-1 flex-col gap-1">

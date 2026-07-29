@@ -21,6 +21,12 @@ const CheckoutPage = lazy(() => import('@/features/checkout/CheckoutPage'));
 const OrderStatusPage = lazy(() => import('@/features/order/OrderStatusPage'));
 const TrackOrderPage = lazy(() => import('@/features/order/TrackOrderPage'));
 
+const TermsPage = lazy(() => import('@/features/policies/TermsPage'));
+const PrivacyPage = lazy(() => import('@/features/policies/PrivacyPage'));
+const RefundPolicyPage = lazy(() => import('@/features/policies/RefundPolicyPage'));
+const ShippingPolicyPage = lazy(() => import('@/features/policies/ShippingPolicyPage'));
+const ContactPage = lazy(() => import('@/features/policies/ContactPage'));
+
 const LoginPage = lazy(() => import('@/features/admin/auth/LoginPage'));
 const RequireAdmin = lazy(() =>
   import('@/features/admin/auth/RequireAdmin').then((m) => ({ default: m.RequireAdmin })),
@@ -62,6 +68,11 @@ export const router = createBrowserRouter([
       { path: '/checkout', element: suspended(<CheckoutPage />) },
       { path: '/order/:orderNumber', element: suspended(<OrderStatusPage />) },
       { path: '/track', element: suspended(<TrackOrderPage />) },
+      { path: '/policies/terms', element: suspended(<TermsPage />) },
+      { path: '/policies/privacy', element: suspended(<PrivacyPage />) },
+      { path: '/policies/refund', element: suspended(<RefundPolicyPage />) },
+      { path: '/policies/shipping', element: suspended(<ShippingPolicyPage />) },
+      { path: '/contact', element: suspended(<ContactPage />) },
       { path: '*', element: <NotFound /> },
     ],
   },

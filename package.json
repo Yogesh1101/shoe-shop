@@ -19,6 +19,8 @@
     "dev:server": "npm run dev -w @shoe-shop/server",
     "dev:client": "npm run dev -w @shoe-shop/client",
     "seed": "npm run seed -w @shoe-shop/server",
+    "seed:admin": "npm run seed:admin -w @shoe-shop/server",
+    "backup": "npm run backup -w @shoe-shop/server",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

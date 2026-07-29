@@ -58,12 +58,16 @@ export default function LoginPage() {
           <div>
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" className="mt-1.5" {...register('email')} />
-            {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
           <div>
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" className="mt-1.5" {...register('password')} />
-            {errors.password && <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
 
           {loginResult.isError && (

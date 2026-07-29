@@ -33,9 +33,9 @@ export default function CartPage() {
   }, [productsQuery.data]);
 
   /**
-   * Indicative only. The authoritative total is computed server-side at
-   * checkout, from database prices — this is a preview, and it is deliberately
-   * labelled as one until the quote endpoint lands in phase 7.
+   * Indicative only. The authoritative total — with delivery, GST and any COD
+   * surcharge — is computed by the checkout page's quote endpoint, which also
+   * re-checks stock. This is a preview, and is labelled as one.
    */
   const subtotalPaise = items.reduce((total, item) => {
     const product = productsById.get(item.productId);
@@ -176,12 +176,9 @@ export default function CartPage() {
         Delivery and taxes are calculated at checkout.
       </p>
 
-      <Button size="lg" className="mt-6 w-full" disabled>
-        Checkout — coming next
+      <Button asChild size="lg" className="mt-6 w-full">
+        <Link to="/checkout">Proceed to checkout</Link>
       </Button>
-      <p className="mt-2 text-center text-xs text-muted-foreground">
-        Checkout and payments arrive in the next build.
-      </p>
     </div>
   );
 }

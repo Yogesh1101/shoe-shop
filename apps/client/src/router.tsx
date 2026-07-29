@@ -17,6 +17,7 @@ const HomePage = lazy(() => import('@/features/home/HomePage'));
 const CatalogPage = lazy(() => import('@/features/catalog/CatalogPage'));
 const ProductPage = lazy(() => import('@/features/product/ProductPage'));
 const CartPage = lazy(() => import('@/features/cart/CartPage'));
+const CheckoutPage = lazy(() => import('@/features/checkout/CheckoutPage'));
 
 function suspended(element: ReactNode): ReactNode {
   return <Suspense fallback={<PageFallback />}>{element}</Suspense>;
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: '/shoes', element: suspended(<CatalogPage />) },
       { path: '/shoes/:slug', element: suspended(<ProductPage />) },
       { path: '/cart', element: suspended(<CartPage />) },
+      { path: '/checkout', element: suspended(<CheckoutPage />) },
       { path: '*', element: <NotFound /> },
     ],
   },

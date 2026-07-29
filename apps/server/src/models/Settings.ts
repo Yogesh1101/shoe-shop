@@ -76,7 +76,10 @@ const settingsSchema = new Schema<SettingsDoc>(
     codMaxOrderValuePaise: { type: Number, required: true, default: 0 },
     maxOrdersPerPhonePerDay: { type: Number, required: true, default: 5 },
 
-    gstEnabled: { type: Boolean, required: true, default: true },
+    // Off until the owner has actually entered a GSTIN — the default combination
+    // of "GST on" with no GSTIN would violate the admin form's own validation
+    // the moment anyone tried to save an unrelated setting.
+    gstEnabled: { type: Boolean, required: true, default: false },
     gstin: { type: String, default: '' },
     sellerState: { type: String, default: 'Karnataka' },
     sellerAddress: { type: String, default: '' },

@@ -1,0 +1,46 @@
+{
+  "name": "shoe-shop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @shoe-shop/shared",
+    "build:server": "npm run build:shared && npm run build -w @shoe-shop/server",
+    "build:client": "npm run build:shared && npm run build -w @shoe-shop/client",
+    "build": "npm run build:shared && npm run build -w @shoe-shop/server && npm run build -w @shoe-shop/client",
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev -w @shoe-shop/server\" \"npm run dev -w @shoe-shop/client\"",
+    "dev:server": "npm run dev -w @shoe-shop/server",
+    "dev:client": "npm run dev -w @shoe-shop/client",
+    "seed": "npm run seed -w @shoe-shop/server",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/dist packages/*/dist"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.0.0",
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^10.0.4",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "globals": "^17.8.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.65.0"
+  }
+}

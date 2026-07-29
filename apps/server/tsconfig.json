@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    // Emitting declarations for an application is pointless and only slows the build.
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src"]
+}

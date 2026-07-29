@@ -1,0 +1,20 @@
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Environment — never commit real secrets
+.env
+.env.*
+!.env.example
+
+# Local artefacts
+backups/
+*.log
+npm-debug.log*
+.DS_Store
+.vercel
+.idea/
+.vscode/*
+!.vscode/extensions.json

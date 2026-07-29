@@ -5,7 +5,8 @@ phone calls. Customers browse the catalog with live per-size stock, order
 themselves, and pay by Razorpay or cash on delivery. Orders land in one admin
 dashboard with GST invoices.
 
-> **Status:** under construction. See `docs/` and the phase checklist below.
+> **Status:** under construction — the shop is browsable but does not yet
+> take payments. See the phase checklist at the bottom.
 
 ---
 
@@ -13,9 +14,9 @@ dashboard with GST invoices.
 
 | Layer    | Choice                                                    |
 | -------- | --------------------------------------------------------- |
-| Frontend | React 18 + Vite + TypeScript, Tailwind v4, shadcn-style UI |
+| Frontend | React 19 + Vite + TypeScript, Tailwind v4, shadcn-style UI |
 | State    | Redux Toolkit + RTK Query; cart in a persisted RTK slice   |
-| Backend  | Node 22 + Express + TypeScript                             |
+| Backend  | Node 22 + Express 5 + TypeScript                           |
 | Database | MongoDB (Mongoose) — Atlas M0 in production                |
 | Images   | Cloudinary                                                 |
 | Payments | Razorpay + Cash on Delivery                                |
@@ -140,11 +141,11 @@ finding we have consciously accepted. Review advisories manually when upgrading.
 ## Build phases
 
 - [x] 1 — Monorepo scaffold, tooling, CI
-- [ ] 2 — `shared` package: schemas, types, money helpers
-- [ ] 3 — Server foundation: env, models, auth, seeds
-- [ ] 4 — Product API + Cloudinary uploads
-- [ ] 5 — Client foundation: Vite, Tailwind, store, UI primitives
-- [ ] 6 — Storefront: home, catalog, product page, cart
+- [x] 2 — `shared` package: schemas, types, money helpers
+- [x] 3 — Server foundation: env, models, auth, seeds
+- [x] 4 — Product API + Cloudinary uploads
+- [x] 5 — Client foundation: Vite, Tailwind, store, UI primitives
+- [x] 6 — Storefront: home, catalog, product page, cart
 - [ ] 7 — Pricing, GST, checkout
 - [ ] 8 — Payments, orders, invoices, emails
 - [ ] 9 — Admin panel

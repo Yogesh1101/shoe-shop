@@ -4,8 +4,12 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
-    // mongodb-memory-server downloads and boots a real mongod on first run.
-    testTimeout: 30_000,
-    hookTimeout: 60_000,
+    // Populates process.env before config/env.ts validates it at import time.
+    setupFiles: ['./src/__tests__/helpers/testEnv.ts'],
+    // Integration suites share one database, so they must not run concurrently
+    // — one file's cleanup would wipe another's fixtures mid-test.
+    fileParallelism: false,
+    testTimeout: 20_000,
+    hookTimeout: 30_000,
   },
 });

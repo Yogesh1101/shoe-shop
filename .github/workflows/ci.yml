@@ -14,6 +14,26 @@ jobs:
     name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
 
+    # The server's integration tests exercise real database behaviour — atomic
+    # stock decrements, unique indexes, upsert races. A mock would only prove
+    # the mock works, so CI runs them against an actual MongoDB.
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      MONGODB_URI_TEST: mongodb://127.0.0.1:27017/shoe-shop-test
+      # Turns "MongoDB unreachable" from a silent skip into a failed build.
+      # A green run made of skipped tests is worse than a red one.
+      REQUIRE_MONGO: '1'
+
     steps:
       - uses: actions/checkout@v4
 

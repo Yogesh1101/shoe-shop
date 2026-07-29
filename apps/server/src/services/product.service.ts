@@ -55,6 +55,14 @@ function buildFilter(query: ProductListQuery, includeInactive: boolean): QueryFi
   // never expose unpublished products.
   if (!includeInactive) filter.isActive = true;
 
+  if (query.ids) {
+    // Drop anything that is not a valid ObjectId rather than letting Mongo
+    // throw a CastError — a cart holding an id from a wiped dev database
+    // should render the remaining lines, not fail the whole page.
+    const valid = query.ids.filter((id) => /^[0-9a-fA-F]{24}$/.test(id));
+    filter._id = { $in: valid };
+  }
+
   if (query.q) filter.$text = { $search: query.q };
   if (query.category) filter.category = query.category;
   if (query.type) filter.type = query.type;

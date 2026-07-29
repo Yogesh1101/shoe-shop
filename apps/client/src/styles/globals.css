@@ -1,42 +1,58 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. Defined here rather than in a JS config because Tailwind v4 is
- * CSS-first: every token below is automatically available as a utility
- * (bg-background, text-muted-foreground, rounded-lg, …).
+ * Design tokens.
+ *
+ * Minimal monochrome: near-black on white, one restrained accent. The shoe
+ * photos carry all the colour — which is what keeps a small catalog looking
+ * premium rather than cheap, and stops the site chrome competing with product
+ * images people have just seen on Instagram.
+ *
+ * Defined in CSS rather than a JS config because Tailwind v4 is CSS-first:
+ * every token below is automatically available as a utility (bg-background,
+ * text-muted-foreground, rounded-lg, …).
  */
 @theme {
   --color-background: oklch(1 0 0);
-  --color-foreground: oklch(0.21 0.02 264);
+  --color-foreground: oklch(0.18 0 0);
 
   --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.21 0.02 264);
+  --color-card-foreground: oklch(0.18 0 0);
 
-  --color-primary: oklch(0.21 0.02 264);
-  --color-primary-foreground: oklch(0.98 0 0);
+  /* Primary is near-black, not a brand colour — buttons should read as
+     typography, not as decoration. */
+  --color-primary: oklch(0.18 0 0);
+  --color-primary-foreground: oklch(0.99 0 0);
 
-  --color-secondary: oklch(0.97 0.003 264);
-  --color-secondary-foreground: oklch(0.21 0.02 264);
+  --color-secondary: oklch(0.97 0 0);
+  --color-secondary-foreground: oklch(0.18 0 0);
 
-  --color-muted: oklch(0.97 0.003 264);
-  --color-muted-foreground: oklch(0.55 0.02 264);
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.52 0 0);
 
-  --color-accent: oklch(0.97 0.003 264);
-  --color-accent-foreground: oklch(0.21 0.02 264);
+  --color-accent: oklch(0.96 0 0);
+  --color-accent-foreground: oklch(0.18 0 0);
 
-  --color-destructive: oklch(0.58 0.22 27);
-  --color-destructive-foreground: oklch(0.98 0 0);
+  /* The single accent, used sparingly: sale badges, the free-delivery nudge. */
+  --color-highlight: oklch(0.55 0.16 28);
+  --color-highlight-foreground: oklch(0.99 0 0);
 
-  --color-success: oklch(0.6 0.15 150);
-  --color-success-foreground: oklch(0.98 0 0);
+  --color-destructive: oklch(0.55 0.21 27);
+  --color-destructive-foreground: oklch(0.99 0 0);
 
-  --color-border: oklch(0.92 0.004 264);
-  --color-input: oklch(0.92 0.004 264);
-  --color-ring: oklch(0.21 0.02 264);
+  --color-success: oklch(0.55 0.13 155);
+  --color-success-foreground: oklch(0.99 0 0);
 
-  --radius-lg: 0.625rem;
-  --radius-md: 0.5rem;
-  --radius-sm: 0.375rem;
+  --color-border: oklch(0.92 0 0);
+  --color-input: oklch(0.89 0 0);
+  --color-ring: oklch(0.18 0 0);
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 @layer base {
@@ -46,26 +62,52 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      'Segoe UI',
-      Roboto,
-      'Helvetica Neue',
-      Arial,
-      sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   /* Product photos load into fixed-ratio boxes, so the grid never reflows. */
   img {
     display: block;
     max-width: 100%;
+  }
+
+  /* Visible focus for keyboard users, suppressed for mouse clicks. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  /* Respect a user's reduced-motion preference rather than overriding it. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /*
+   * The checkout honeypot. Hidden from people without `display: none`, which
+   * some bots specifically skip — anything that fills this in is not a browser.
+   */
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 }

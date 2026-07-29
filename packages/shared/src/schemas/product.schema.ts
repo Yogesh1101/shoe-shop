@@ -163,6 +163,13 @@ const csvArray = z
 
 export const productListQuerySchema = z.object({
   q: z.string().trim().max(80).optional(),
+  /**
+   * Fetch specific products by id. The cart stores only
+   * `{ productId, color, size, qty }` — no names, images or prices — so the
+   * cart page resolves its display data through this rather than caching
+   * details that would go stale the moment a shoe is edited.
+   */
+  ids: csvArray,
   category: z.enum(CATEGORIES).optional(),
   type: z.enum(SHOE_TYPES).optional(),
   brand: csvArray,

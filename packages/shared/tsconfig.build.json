@@ -1,0 +1,10 @@
+{
+  // Emits dist/. Tests are run from source by Vitest and must not be published.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "exclude": ["src/**/*.test.ts"]
+}

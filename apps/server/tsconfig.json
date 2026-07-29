@@ -1,4 +1,6 @@
 {
+  // Everything, tests included — used by the editor, `typecheck` and ESLint.
+  // `tsconfig.build.json` is the one that emits dist/.
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "NodeNext",
@@ -6,9 +8,12 @@
     "outDir": "dist",
     "rootDir": "src",
     "types": ["node"],
-    // Emitting declarations for an application is pointless and only slows the build.
+    "noEmit": true,
+    // Declarations for an application are pointless and only slow the build.
     "declaration": false,
     "declarationMap": false
   },
+  // vitest.config.ts is deliberately absent: `rootDir` is src, and ESLint
+  // already covers it through `allowDefaultProject`.
   "include": ["src"]
 }

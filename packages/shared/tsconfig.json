@@ -1,10 +1,15 @@
 {
+  // Everything, tests included. This is what the editor, `typecheck` and
+  // ESLint's type-aware rules use. `tsconfig.build.json` is the one that emits.
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["src"]
 }

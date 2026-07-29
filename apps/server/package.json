@@ -6,14 +6,14 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
     "seed": "tsx src/scripts/seed.ts",
     "seed:admin": "tsx src/scripts/seedAdmin.ts",
     "seed:products": "tsx src/scripts/seedProducts.ts",
     "backup": "tsx src/scripts/backup.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "clean": "rm -rf dist"
   },

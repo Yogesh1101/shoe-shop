@@ -1,0 +1,8 @@
+{
+  // Emits dist/. Tests run from source under Vitest and must not be deployed.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false
+  },
+  "exclude": ["src/**/*.test.ts", "src/**/__tests__/**"]
+}
